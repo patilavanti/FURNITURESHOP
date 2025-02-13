@@ -1,0 +1,78 @@
+
+<%@page import="java.sql.ResultSet"%>
+<%@ include file="../header.jsp"%>
+<%
+if(request.getParameter("did")!=null){
+	da.executeSql("delete from product where prodid=?",request.getParameter("did"));
+	msg="Product Deleted SuccessFully";
+}
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="/Project/css/bootstrap.css" rel="stylesheet"/>
+<link href="/Project/js/datatables.css" rel="stylesheet"/>
+</head>
+<body style="background-image:url('/Project/image/productlist.jpeg'); background-size:100%">
+
+<div class="container col-12">
+<br>
+<h4>Product List::</h4>
+<br>
+
+<div class="card bg-white">
+<a href="/Project/admin/addproduct.jsp" class="btn btn-primary ">Add Product</a>
+
+<table id="table1" class="table table-bordered">
+<thead>
+	<tr>
+		<th> Product ID</th>
+		<th> Product Name</th>
+		<th> Category Name</th>
+		<th> Brand Name</th>
+		<th> Price</th>
+		<th> Quantity</th>
+		<th> Unit</th>
+	<th> Product Image</th>
+		<th> Action</th>
+	</tr>
+
+</thead>
+<tbody>
+<%
+ResultSet rs=da.getRows("select a.prodid, a.productname, b.categoryname, c.brandname, a.price,a.qty, a.unit, a.image from Product a, Category b, Brand C where a.catid=b.catid and a.brandid=c.brandid");
+while(rs.next()){
+%>
+	<tr>
+		<td><%=rs.getString(1) %></td>
+		<td><%=rs.getString(2) %></td>
+		<td><%=rs.getString(3) %></td>
+		<td><%=rs.getString(4) %></td>
+		<td><%=rs.getString(5) %></td>
+		<td><%=rs.getString(6) %></td>
+		<td><%=rs.getString(7) %></td>
+		<td>
+		<img src="/Project/image/<%=rs.getString(8)%>" width="50" height="50"/>
+		</td>
+		
+		<td>
+			<a href="/Project/admin/addproduct.jsp?eid=<%=rs.getString(1) %>" class="btn btn-info">Edit</a>
+			<a href="?did=<%=rs.getString(1)%>" class="btn btn-danger">Delete</a>
+		</td>
+	</tr>
+<%
+}
+%>
+</tbody>
+</table>
+</div>
+</div>
+
+<%@ include file="../footer.jsp"%>
+<script>
+$(function(){
+	
+	$("#table1").DataTable();
+});
+</script>
