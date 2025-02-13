@@ -1,0 +1,67 @@
+<%@page import="java.sql.ResultSet" %>
+<%@ include file="../header.jsp"%>
+<%
+if(request.getParameter("btnchange")!=null){
+	String opass=request.getParameter("txtopass");
+	String npass=request.getParameter("txtnpass");
+	String cpass=request.getParameter("txtcpass");
+	String pass=session.getAttribute("pass")+"";
+	if(pass.equals(opass)){
+		if(npass.equals(cpass)){
+			session.setAttribute("pass", npass);
+			da.executeSql("update adminlogin set password=?",npass);
+			msg="Password Change";
+		}else{
+			msg="New and Confirm Password Mismatch";
+		}
+	}else{
+		msg="Enter correct Password";
+		
+	}
+		
+	}
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="/Project/css/bootstrap.css" rel="stylesheet"/>
+<link href="/Project/js/datatables.css" rel="stylesheet"/>
+</head>
+<body style="background-image:url('/Project/image/image5.jpg') ; background-size:50%">
+
+<div class="container">
+<br>
+<br>
+<h4>Change Password</h4>
+
+<div class=" card col-6 " >
+
+<div class=" card-body " >
+
+<form>
+		<div class="form-group">
+		Old Password
+		<input type="password" name="txtopass" placeholder="Old Password"  class="form-control"/>
+		</div>
+		<div class ="form-group">
+		New Password
+		<input type="password" name="txtnpass" placeholder="New Password"  class="form-control"/>
+		</div>
+		<div class ="form-group">
+		Confirm Password
+		<input type="password" name="txtcpass" placeholder="Confirm Password"  class="form-control"/>
+		</div>
+		
+		<br>
+		<div class="form-group">
+		<input type="submit" name="btnchange"  value="change" class="btn btn-primary"/>
+		<input type="submit" name="btnreset"  value="Reset" class="btn btn-primary"/>
+		<input type="submit" name="btncancel"  value="Cancel" class="btn btn-danger"/>
+		</div>
+</form>
+<%=msg %>
+</div>
+</div>
+</div>
+<%@ include file="../footer.jsp"%>
