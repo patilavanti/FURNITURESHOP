@@ -1,0 +1,67 @@
+
+<%@page import="java.sql.ResultSet"%>
+<%@ include file="../header.jsp"%>
+<%
+if(session.getAttribute("type").equals("customer")){
+	String email= session.getAttribute("user").toString();
+
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="/Project/css/bootstrap.css" rel="stylesheet"/>
+<link href="/Project/js/datatables.css" rel="stylesheet"/>
+</head>
+<body style="background-image:url('/Project/image/order.jpg'); background-size:100%">
+
+
+<div class="container col-6 offset-2">
+<br>
+<h4>Orders::</h4>
+<br>
+
+<div class="card bg-white">
+<div>
+<table id="table1" class="table table-bordered">
+<thead>
+	<tr>
+		<th> Order ID</th>
+		<th> Product Name</th>
+		<th> Email</th>
+		<th> Price</th>
+		<th> Date</th>
+	</tr>
+
+</thead>
+<tbody>
+<%
+ResultSet rs=da.getRows("select * from orders where email=?",email);
+while(rs.next()){
+%>
+	<tr>
+		<td><%=rs.getString(1) %></td>
+		<td><%=rs.getString(2) %></td>
+		<td><%=rs.getString(3) %></td>
+		<td><%=rs.getString(4) %></td>
+		<td><%=rs.getString(5) %></td>
+		
+	</tr>
+<%
+}
+%>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<%@ include file="../footer.jsp"%>
+<script>
+$(function(){
+	
+	$("#table1").DataTable();
+});
+</script>
+<%
+}
+%>
