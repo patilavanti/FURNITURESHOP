@@ -1,0 +1,102 @@
+<%@page import="java.sql.ResultSet"%>
+<%@ include file="../header.jsp"%>
+<%
+String name="";
+String catid="";
+String btnsave="Save";
+if(request.getParameter("btnsubmit")!=null){
+	name=request.getParameter("txtcat");
+	if(request.getParameter("btnsubmit").equals("Save")){
+	da.executeSql("insert into category(categoryname) values(?)", name);
+	msg="Category Stored";
+	}else{
+		catid=request.getParameter("catid");
+		da.executeSql("update category set categoryname=? where catid=?",name,catid);
+	}
+}
+if(request.getParameter("did")!=null){
+	catid=request.getParameter("did");
+	da.executeSql("delete from category where catid=?",catid);
+	msg="Record Deleted Successfully";
+}
+if(request.getParameter("eid")!=null){
+	 catid=request.getParameter("eid");
+	ResultSet rs=da.getRows("select * from category where catid=?",catid);
+	if(rs.next()){
+		catid=rs.getString(1);
+		name=rs.getString(2);
+		btnsave="Update";
+	}
+	
+}
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="/Project/css/bootstrap.css" rel="stylesheet"/>
+<link href="/Project/js/datatables.css" rel="stylesheet"/>
+</head>
+<body style="background-image:url('/Project/image/category.webp'); background-size:100%">
+
+<div class="container col-6 offset-2">
+<br>
+<h4>Category::</h4>
+<div>
+<br>
+<form>
+<input type="hidden" name="catid" value="<%=catid %>"/>
+<div class="form-group">
+Category Name
+<input type="text" name="txtcat" value="<%=name %>" class="form-control text"/>
+</div>
+<br>
+<div>
+<input type="submit" name="btnsubmit" value="<%=btnsave%>" class="btn btn-primary"/>
+</div>
+</form>
+</div>
+
+</div>
+
+<div class="card col-7 mt-5 offset-2">
+<div class="text-center">
+<div class="card-body">
+<div>
+<table id="table1" class="table table-bordered" >
+<thead>
+	<tr>
+		<th class="text-black"> Category ID</th>
+		<th class="text-black"> Category Name</th>
+		<th class="text-black"> Action</th>
+	</tr>
+
+</thead>
+<tbody>
+<%
+ResultSet rs=da.getRows("select * from category");
+while(rs.next()){
+%>
+	<tr>
+		<td><%=rs.getString(1) %></td>
+		<td><%=rs.getString(2) %></td>
+		<td>
+			<a href="category.jsp?eid=<%=rs.getString(1) %>" class="btn btn-info">Edit</a>
+			<a href="category.jsp?did=<%=rs.getString(1) %>" class="btn btn-danger">Delete</a>
+		</td>
+	</tr>
+<%
+}
+%>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<%@ include file="../footer.jsp"%>
+<script>
+$(function(){
+	$("#table1").DataTable();
+});
+</script>
