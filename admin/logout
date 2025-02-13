@@ -1,0 +1,5 @@
+<%
+session.setAttribute("user",null);
+session.setAttribute("pass",null);
+response.sendRedirect("/Project/signin.jsp");
+%>
