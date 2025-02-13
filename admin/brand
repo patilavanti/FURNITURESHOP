@@ -1,0 +1,103 @@
+
+<%@page import="java.sql.ResultSet"%>
+<%@ include file="../header.jsp"%>
+<%
+String name="";
+String brandid="";
+String btnsave="Save";
+if(request.getParameter("btnsubmit")!=null){
+	name=request.getParameter("txtbrand");
+	if(request.getParameter("btnsubmit").equals("Save")){
+		da.executeSql("insert into brand (Brandname) values(?)",name);
+		msg="Brand Stored";
+	}else{
+		brandid=request.getParameter("catid");
+		da.executeSql("update brand set Brandname=? where Brandid=?",name,brandid);
+	}
+}
+if(request.getParameter("did")!=null){
+	brandid=request.getParameter("did");
+	da.executeSql("delete from brand where Brandid=?",brandid);
+	msg="Record Deleted Successfully";
+}
+if(request.getParameter("eid")!=null){
+	 brandid=request.getParameter("eid");
+	ResultSet rs=da.getRows("select * from brand where Brandid=?",brandid);
+	if(rs.next()){
+		brandid=rs.getString(1);
+		name=rs.getString(2);
+		btnsave="Update";
+	}
+	
+}
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="/Project/css/bootstrap.css" rel="stylesheet"/>
+<link href="/Project/js/datatables.css" rel="stylesheet"/>
+</head>
+<body style="background-image:url('/Project/image/brand.webp'); background-size:100%">
+<div class="container col-6 mt-5 offset-2">
+<br>
+<h4>Brand::</h4>
+<br>
+
+<div class="card bg-white">
+<div>
+<form>
+<input type="hidden" name="brandid" value="<%=brandid %>"/>
+<div class="form-group">
+Brand Name
+<input type="text" name="txtbrand" value="<%=name %>" class="form-control"/>
+</div>
+<br>
+<div>
+<input type="submit" name="btnsubmit" value="<%=btnsave%>" class="btn btn-primary"/>
+</div>
+<br>
+
+
+</form>
+</div>
+
+
+<div>
+<table id="table1" class="table table-bordered">
+<thead>
+	<tr>
+		<th> Brand ID</th>
+		<th> Brand Name</th>
+		<th> Action</th>
+	</tr>
+
+</thead>
+<tbody>
+<%
+ResultSet rs=da.getRows("select * from brand");
+while(rs.next()){
+%>
+	<tr>
+		<td><%=rs.getString(1) %></td>
+		<td><%=rs.getString(2) %></td>
+		<td>
+			<a href="brand.jsp?eid=<%=rs.getString(1) %>" class="btn btn-info">Edit</a>
+			<a href="brand.jsp?did=<%=rs.getString(1) %>" class="btn btn-danger">Delete</a>
+		</td>
+	</tr>
+<%
+}
+%>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<%@ include file="../footer.jsp"%>
+<script>
+$(function(){
+	
+	$("#table1").DataTable();
+});
+</script>
