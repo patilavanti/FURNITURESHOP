@@ -1,0 +1,42 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Date"%>
+<%@  include file="../header.jsp"%>
+<%
+if(request.getParameter("btnsubmit")!=null){
+	String email=session.getAttribute("user").toString();
+	String feedback=request.getParameter("txtfeedback");
+	Date dt=new Date();
+	SimpleDateFormat sdf=new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+	String fdate=sdf.format(dt);
+	da.executeSql("insert into feedback (email,feedback,date) values(?,?,?)",email,feedback,fdate);
+	msg="Feedback Stored SuccessFully";
+	}
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="/Project/css/bootstrap.css" rel="stylesheet"/>
+<link href="/Project/js/datatables.css" rel="stylesheet"/>
+</head>
+<body style="background-image:url('/Project/image/feedback.jpg'); background-size:100%">
+
+<div class="container col-6  my-5 offset-2">
+<br>
+<br>
+
+
+<form>
+	
+	<div class="form-group">
+	<textarea  class="form-control"name="txtfeedback" rows="10">
+	</textarea>
+	</div>
+	<br>
+	<div class="form-group">
+	<input type="submit" name="btnsubmit" value="Submit" class="btn btn-primary"/>
+	</div>
+</form>
+</div>
+
+<%@ include file="../footer.jsp" %>
