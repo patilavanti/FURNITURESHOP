@@ -14,7 +14,7 @@ The system is built using JSP for the backend and MySQL for data storage.
 
 
 
-# Domain Description:  Furniture Shop
+# Domain Description:  Furniture Shop:
 The Furniture Shop Management System is a web-based platform designed to facilitate the buying and selling of furniture. It provides a seamless shopping experience for customers while offering efficient management tools for the admin.
 
 # Key Modules:
