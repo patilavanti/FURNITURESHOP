@@ -1,0 +1,128 @@
+<%@page import="javazoom.upload.UploadFile" %>
+<%@page import="java.util.Hashtable"%>
+<%@page import="javazoom.upload.MultipartFormDataRequest"%>
+<%@page import="javazoom.upload.UploadBean"%>
+<%@page import="java.sql.ResultSet"%>
+<%@ include file="../header.jsp"%>
+<%
+String name="",title="Add Product::";
+String prodid="",price="",image="",qty="",catid="";
+String btnsave="Save",brandid="",unit="",fname="";
+String path=request.getRealPath("/image/");
+UploadBean upbean=new UploadBean();
+upbean.setFolderstore(path);
+if(MultipartFormDataRequest .isMultipartFormData(request)){
+	MultipartFormDataRequest mrequest=new MultipartFormDataRequest(request);
+	prodid=mrequest.getParameter("prodid");
+	name=mrequest.getParameter("txtprod");
+	catid=mrequest.getParameter("txtcat");
+	brandid=mrequest.getParameter("txtbrand");
+	price=mrequest.getParameter("txtprice");
+	qty=mrequest.getParameter("txtqty");
+	unit=mrequest.getParameter("txtunit");
+	Hashtable ht=mrequest.getFiles();
+	if(ht!=null && ht.size()>0){
+		UploadFile uf=(UploadFile)ht.get("txtimage");
+		if(uf!=null && uf.getFileName()!=null && uf.getFileName()!=""){
+			fname=uf.getFileName();
+			upbean.store(mrequest,"txtimage");
+		}
+	}
+	if(mrequest.getParameter("btnsubmit")!=null)
+		if(mrequest.getParameter("btnsubmit").equals("Save")){
+		da.executeSql("insert into product (ProductName,CatId,BrandId,price,qty,unit,Image) values(?,?,?,?,?,?,?)", name,catid,brandid,price,qty,unit,fname);
+	msg="Product Stored SuccessFully";
+}else{
+	da.executeSql("Update product set ProductName=?,CatId=?,BrandId=?,price=?,qty=?,unit=?,Image=? where prodid=?",name,catid,brandid,price,qty,unit,fname,prodid);
+	msg="Product Modified SuccessFully";
+}
+}else{
+	if(request.getParameter("eid")!=null){
+		ResultSet rs=da.getRows("select * from product where prodid=?",request.getParameter("eid"));
+		if(rs.next()){
+			prodid=rs.getString(1);
+			name=rs.getString(2);
+			catid=rs.getString(3);
+			brandid=rs.getString(4);
+			price=rs.getString(5);
+			qty=rs.getString(6);
+			unit=rs.getString(7);
+			fname=rs.getString(8);
+			btnsave="Update";
+			title="Modify Product::";
+		}
+	}
+}
+%>
+<div class="container col-7 offset-2" >
+<br>
+<h4>Add Product::</h4>
+<br>
+
+<form method="post" enctype="multipart/form-data"> 
+<input type="hidden" name="prodid" value="<%=prodid %>"/>
+<div class="form-group">
+
+<h6>Product Name</h6>
+<input type="text" name="txtprod" value="<%=name %>"class="form-control"/>
+</div>
+<div class="form-group">
+<h6>Category Name</h6>
+<select name="txtcat" class="form-control">
+<option value="">Select Category</option>
+<%
+ResultSet rs=da.getRows("select * from category");
+while(rs.next()){
+%>
+<option value="<%=rs.getString(1)%>"<%=catid.equals(rs.getString(1))?"Selected":"" %>><%=rs.getString(2)%></option>
+<%
+}
+%>
+</select>
+</div>
+<div class="form-group">
+<h6>Brand Name</h6>
+<select name="txtbrand" class="form-control">
+<option value="">Select Brand</option>
+<%
+rs=da.getRows("select * from brand");
+while(rs.next()){
+%>
+<option value="<%=rs.getString(1)%>"<%=brandid.equals(rs.getString(1))?"Selected":"" %>><%=rs.getString(2) %></option>
+<%
+}
+%>
+</select>
+</div>
+<div class="form-group">
+<h6>Price</h6>
+<input type="text" name="txtprice" value="<%=price %>" class="form-control"/>
+</div>
+
+<div class="form-group">
+<h6>Quantity</h6>
+<input type="text" name="txtqty" value="<%=price %>" class="form-control"/>
+</div>
+
+<div class="form-group">
+<h6>Unit</h6>
+<select name="txtunit" class="form-control">
+<option value="">Select Unit</option>
+<option value="1">Pieces</option>
+<option value="2">Nos</option>
+<option value="3"></option>
+</select>
+</div>
+<div class="form-group">
+<h6>Image</h6>
+<input type="file" name="txtimage" value="<%=image %>" class="form-control"/>
+</div>
+<br>
+<div>
+<input type="submit" name="btnsubmit" value="<%=btnsave%>" class="btn btn-primary"/>
+<a href="/Project/admin/productlist.jsp" class="btn btn-info">Product List</a>
+</div>
+<br>
+</form>
+</div>
+<%@ include file="../footer.jsp"%>
